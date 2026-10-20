@@ -16,8 +16,15 @@ function Status({ value }) {
 }
 
 function PriceBadge({ isPaid, price }) {
-  const rupees = price ? (price / 100).toFixed(2) : "0.00";
-  return isPaid && Number(price) > 0 ? (
+  const isPaidBool =
+    isPaid === true ||
+    String(isPaid).toLowerCase() === "true" ||
+    isPaid === 1;
+  const numPrice = Number(price || 0);
+  const isPaidEvent = (isPaidBool && numPrice > 0) || numPrice > 0;
+  const rupees = numPrice > 0 ? (numPrice / 100).toFixed(2) : "0.00";
+
+  return isPaidEvent ? (
     <span className="price-badge paid">₹{rupees}</span>
   ) : (
     <span className="price-badge free">FREE</span>
@@ -555,8 +562,12 @@ function EditModal({ token, event, onClose, onUpdated }) {
     venue: event.venue || "",
     date: event.date ? event.date.slice(0, 16) : "",
     capacity: event.capacity ?? "",
-    isPaid: Boolean(event.isPaid),
-    price: event.price ? (event.price / 100).toString() : "",
+    isPaid: Boolean(
+      event.isPaid === true ||
+      String(event.isPaid).toLowerCase() === "true" ||
+      Number(event.price) > 0
+    ),
+    price: event.price && Number(event.price) > 0 ? (Number(event.price) / 100).toString() : "",
     status: event.status || "ACTIVE",
     salesStart: event.salesStart ? event.salesStart.slice(0, 16) : "",
     salesEnd: event.salesEnd ? event.salesEnd.slice(0, 16) : "",

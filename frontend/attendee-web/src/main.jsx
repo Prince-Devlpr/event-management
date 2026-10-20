@@ -19,17 +19,36 @@ const apiDate = (value) =>
 const formatRupees = (paise) =>
   `₹${(Number(paise || 0) / 100).toFixed(2)}`;
 
+const isPaidEventCheck = (event) => {
+  if (!event) return false;
+  const isPaid =
+    event.isPaid === true ||
+    String(event.isPaid).toLowerCase() === "true" ||
+    event.isPaid === 1;
+  const price = Number(event.price || 0);
+  return (isPaid && price > 0) || price > 0;
+};
+
 const Status = ({ value }) => (
   <span className={`status status-${String(value || "").toLowerCase()}`}>
     {value || "UNKNOWN"}
   </span>
 );
 
-const PriceBadge = ({ isPaid, price }) => (
-  <span className={`price-badge ${isPaid && price > 0 ? "paid" : "free"}`}>
-    {isPaid && price > 0 ? formatRupees(price) : "FREE"}
-  </span>
-);
+const PriceBadge = ({ isPaid, price }) => {
+  const isPaidBool =
+    isPaid === true ||
+    String(isPaid).toLowerCase() === "true" ||
+    isPaid === 1;
+  const numPrice = Number(price || 0);
+  const isPaidEvent = (isPaidBool && numPrice > 0) || numPrice > 0;
+
+  return (
+    <span className={`price-badge ${isPaidEvent ? "paid" : "free"}`}>
+      {isPaidEvent ? formatRupees(numPrice) : "FREE"}
+    </span>
+  );
+};
 
 const Notice = ({ children, success = false, error = false }) =>
   children ? (
@@ -138,7 +157,7 @@ function Home() {
                 </small>
 
                 <b>
-                  {event.isPaid && event.price > 0
+                  {isPaidEventCheck(event)
                     ? `Book · ${formatRupees(event.price)} →`
                     : "Book free ticket →"}
                 </b>
@@ -173,7 +192,7 @@ function Booking({ event, close }) {
   const [busy, setBusy] = useState(false);
   const [paymentStep, setPaymentStep] = useState("");
 
-  const isPaidEvent = Boolean(event.isPaid && event.price > 0);
+  const isPaidEvent = isPaidEventCheck(event);
 
   async function submit(e) {
     e.preventDefault();
@@ -284,7 +303,7 @@ function Booking({ event, close }) {
         <div className="heading">
           <div>
             <p className="eyebrow">
-              {isPaidEvent ? "BOOK PAID TICKET" : "BOOK FREE TICKET"}
+              {isPaidEvent ? `PAID TICKET · ${formatRupees(event.price)}` : "FREE EVENT"}
             </p>
             <h2>{event.name}</h2>
             <p className="muted">
