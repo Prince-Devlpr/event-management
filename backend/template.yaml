@@ -515,6 +515,8 @@ Resources:
             TableName: !Ref EventsTable
         - DynamoDBCrudPolicy:
             TableName: !Ref TicketsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PaymentsTable
         - Statement:
             - Effect: Allow
               Action: secretsmanager:GetSecretValue
@@ -628,6 +630,8 @@ Resources:
             TableName: !Ref TicketsTable
         - DynamoDBCrudPolicy:
             TableName: !Ref VerificationCodesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PaymentsTable
         - Statement:
             - Effect: Allow
               Action: secretsmanager:GetSecretValue
