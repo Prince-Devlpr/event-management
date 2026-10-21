@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiClient {
   static const defaultBaseUrl =
-      'https://c2ck14z7ga.execute-api.ap-south-1.amazonaws.com/Prod';
+      String.fromEnvironment('BASE_URL', defaultValue: 'https://21e7v8mq05.execute-api.ap-south-1.amazonaws.com/Prod');
 
   final String baseUrl;
 
