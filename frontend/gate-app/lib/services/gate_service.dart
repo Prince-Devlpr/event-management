@@ -7,7 +7,7 @@ class GateService {
       String.fromEnvironment('BASE_URL', defaultValue: 'https://21e7v8mq05.execute-api.ap-south-1.amazonaws.com/Prod');
 
   static const String gateApiKey =
-      String.fromEnvironment('GATE_API_KEY', defaultValue: '2dpzw0tofj');
+      String.fromEnvironment('GATE_API_KEY', defaultValue: 'YhYO9U1hhlaTBSqxx271E9C4y99aEnmI72N3HN68');
 
   final String baseUrl;
 
