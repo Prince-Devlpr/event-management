@@ -344,7 +344,10 @@ async function findRecentChallenge({ email, purpose, cooldownSeconds }) {
 // --- Payment & Transaction Operations ---
 
 async function putPayment(payment) {
-  await ddb.send(new PutCommand({ TableName: PAYMENTS_TABLE, Item: payment }));
+  const item = { ...payment };
+  // DynamoDB GSI PaymentIdIndex requires type String (S); null values cause validation errors
+  if (!item.paymentId) delete item.paymentId;
+  await ddb.send(new PutCommand({ TableName: PAYMENTS_TABLE, Item: item }));
   return payment;
 }
 
@@ -390,7 +393,11 @@ async function listPaymentsByAdmin(adminId) {
 }
 
 async function updatePayment(orderId, updateFields) {
-  const keys = Object.keys(updateFields);
+  const sanitized = { ...updateFields };
+  if ('paymentId' in sanitized && !sanitized.paymentId) {
+    delete sanitized.paymentId;
+  }
+  const keys = Object.keys(sanitized);
   if (keys.length === 0) return;
   const updateExprParts = [];
   const exprAttrNames = {};
@@ -399,7 +406,7 @@ async function updatePayment(orderId, updateFields) {
   keys.forEach((key, idx) => {
     updateExprParts.push(`#k${idx} = :v${idx}`);
     exprAttrNames[`#k${idx}`] = key;
-    exprAttrValues[`:v${idx}`] = updateFields[key];
+    exprAttrValues[`:v${idx}`] = sanitized[key];
   });
 
   await ddb.send(

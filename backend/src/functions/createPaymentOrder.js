@@ -110,6 +110,7 @@ exports.handler = async (event) => {
     });
 
     // Store record in PaymentsTable
+    // Note: paymentId is omitted until verified and captured so DynamoDB PaymentIdIndex (AttributeType: S) is not given a NULL value
     const paymentRecord = {
       orderId: rzpOrder.id,
       eventId,
@@ -119,9 +120,6 @@ exports.handler = async (event) => {
       amount: eventRecord.price,
       currency: eventRecord.currency || 'INR',
       status: 'CREATED',
-      paymentId: null,
-      ticketId: null,
-      refundId: null,
       refundAmount: 0,
       refundStatus: 'NONE',
       receipt: receiptId,
